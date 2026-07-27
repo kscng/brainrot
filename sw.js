@@ -1,4 +1,4 @@
-const CACHE = 'brainrot-v14';
+const CACHE = 'brainrot-v15';
 const FILES = [
   './',
   './index.html',
@@ -10,11 +10,18 @@ const FILES = [
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(c =>
-      Promise.all(FILES.map(f => fetch(f, { cache: 'reload' }).then(res => c.put(f, res))))
-    )
-  );
+  e.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    const charsRes = await fetch('characters.json', { cache: 'reload' });
+    const chars = await charsRes.clone().json();
+    const images = chars.map(c => c.image).filter(Boolean);
+    await Promise.all(FILES.map(f =>
+      f === './characters.json'
+        ? cache.put(f, charsRes)
+        : fetch(f, { cache: 'reload' }).then(res => cache.put(f, res))
+    ));
+    await Promise.all(images.map(f => fetch(f, { cache: 'reload' }).then(res => cache.put(f, res))));
+  })());
   self.skipWaiting();
 });
 
