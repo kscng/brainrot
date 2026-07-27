@@ -38,17 +38,25 @@
   #galleryHead h2 { font-size: 18px; margin: 0; }
   #galleryClose { font-size: 22px; background: none; border: 0; color: #fff; opacity: .7; }
   #galleryGrid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px;
     overflow-y: auto; max-height: 68vh; padding: 2px;
   }
   .gcell {
     background: #241645; border-radius: 14px; padding: 8px 6px; text-align: center;
   }
+  .gcell.found { cursor: pointer; }
+  .gcell.found:active { transform: scale(.96); }
   .gcell .gart { font-size: 32px; line-height: 1.2; }
-  .gcell .gart img { height: 32px; width: auto; border-radius: 6px; }
+  .gcell .gart img { height: 96px; width: auto; max-width: 100%; border-radius: 10px; }
   .gcell .gname { font-size: 11px; font-weight: 700; color: #ffd76a; margin-top: 4px; }
   .gcell.locked { background: #150c2b; }
   .gcell.locked .gart { filter: brightness(0); opacity: .8; }
+
+  dialog#lightbox {
+    border: 0; border-radius: 20px; padding: 0; background: transparent; max-width: 92vw; max-height: 88vh;
+  }
+  dialog#lightbox::backdrop { background: rgba(0,0,0,.8); }
+  dialog#lightbox img { display: block; max-width: 92vw; max-height: 88vh; border-radius: 16px; }
   .gcell.locked .gname { color: #6b6086; font-weight: 400; font-size: 10px; }
 
   #stage {
@@ -145,6 +153,10 @@
   <div id="galleryGrid"></div>
 </dialog>
 
+<dialog id="lightbox">
+  <img id="lightboxImg" src="" alt="">
+</dialog>
+
 <script>
 const $ = s => document.querySelector(s);
 const slots = [...document.querySelectorAll('.slot')];
@@ -168,15 +180,24 @@ function score() {
 function renderGallery() {
   $('#galleryGrid').innerHTML = chars.map(c => {
     const got = found.has(c.name);
-    const artHtml = c.image && got ? `<img src="${c.image}" alt="${c.name}">` : c.art;
+    const hasImg = c.image && got;
+    const artHtml = hasImg ? `<img src="${c.image}" alt="${c.name}">` : c.art;
     return got
-      ? `<div class="gcell"><div class="gart">${artHtml}</div><div class="gname">${c.name}</div></div>`
+      ? `<div class="gcell${hasImg ? ' found' : ''}"${hasImg ? ` data-image="${c.image}" data-name="${c.name}"` : ''}><div class="gart">${artHtml}</div><div class="gname">${c.name}</div></div>`
       : `<div class="gcell locked"><div class="gart">${c.art}</div><div class="gname">🔒 ${c.hint}</div></div>`;
   }).join('');
 }
 $('#galleryBtn').onclick = () => $('#gallery').showModal();
 $('#galleryClose').onclick = () => $('#gallery').close();
 $('#gallery').addEventListener('click', e => { if (e.target === $('#gallery')) $('#gallery').close(); });
+$('#galleryGrid').addEventListener('click', e => {
+  const cell = e.target.closest('.gcell.found');
+  if (!cell) return;
+  $('#lightboxImg').src = cell.dataset.image;
+  $('#lightboxImg').alt = cell.dataset.name;
+  $('#lightbox').showModal();
+});
+$('#lightbox').addEventListener('click', () => $('#lightbox').close());
 function show(art, name, hint, cls, sayName, image) {
   $('#art').innerHTML = image ? `<img src="${image}" alt="${name}">` : '';
   if (!image) $('#art').textContent = art;
