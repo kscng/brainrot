@@ -27,7 +27,7 @@
   }
   #topbar { display: flex; justify-content: space-between; align-items: center; width: 100%; }
   #score { font-size: 14px; opacity: .6; }
-  #galleryBtn { font-size: 20px; background: none; border: 0; color: #fff; opacity: .7; padding: 4px 8px; }
+  #galleryBtn, #matchBtn { font-size: 20px; background: none; border: 0; color: #fff; opacity: .7; padding: 4px 8px; }
 
   dialog#gallery {
     border: 0; border-radius: 20px; padding: 16px; background: #1b1035; color: #fff;
@@ -62,6 +62,37 @@
   dialog#lightbox::backdrop { background: rgba(0,0,0,.8); }
   dialog#lightbox img { display: block; max-width: 92vw; max-height: 88vh; border-radius: 16px; }
   .gcell.locked .gname { color: #6b6086; font-weight: 400; font-size: 10px; }
+
+  dialog#match {
+    border: 0; border-radius: 20px; padding: 16px; background: #1b1035; color: #fff;
+    width: min(480px, 92vw); max-height: 88vh;
+  }
+  dialog#match::backdrop { background: rgba(0,0,0,.6); }
+  #matchHead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; }
+  #matchHead h2 { font-size: 18px; margin: 0; }
+  #matchTimer { font-size: 15px; font-weight: 800; color: #ffd76a; }
+  #matchTimer.low { color: #ff6b6b; }
+  #matchNew, #matchClose {
+    font-size: 13px; font-weight: 700; background: none; border: 1px solid #7a5cc4;
+    color: #fff; opacity: .8; padding: 6px 10px; border-radius: 999px;
+  }
+  #matchClose { font-size: 20px; border: 0; padding: 4px 8px; }
+  #matchMsg { text-align: center; font-weight: 700; color: #ffd76a; min-height: 22px; margin-bottom: 8px; }
+  #matchGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .card { aspect-ratio: 3/4; background: none; border: 0; padding: 0; perspective: 600px; }
+  .card-inner {
+    position: relative; width: 100%; height: 100%; transition: transform .4s;
+    transform-style: preserve-3d;
+  }
+  .card.flipped .card-inner, .card.matched .card-inner { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; inset: 0; backface-visibility: hidden; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .card-back { background: #2a1a52; font-size: clamp(28px, 8vmin, 44px); }
+  .card-front { background: #241645; transform: rotateY(180deg); }
+  .card-front img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+  .card.matched .card-front { outline: 3px solid #ffd76a; }
 
   #stage {
     flex: 1; width: 100%; display: flex; flex-direction: column;
@@ -124,6 +155,7 @@
   <main>
     <div id="topbar">
       <div id="score"></div>
+      <button id="matchBtn" aria-label="Matching game">🃏 Match</button>
       <button id="galleryBtn" aria-label="Gallery">🖼️ Gallery</button>
     </div>
     <div id="stage">
@@ -157,6 +189,17 @@
   <img id="lightboxImg" src="" alt="">
 </dialog>
 
+<dialog id="match">
+  <div id="matchHead">
+    <h2>Memory Match</h2>
+    <div id="matchTimer">60s</div>
+    <button id="matchNew" aria-label="New game">🔀 New</button>
+    <button id="matchClose" aria-label="Close">✕</button>
+  </div>
+  <div id="matchMsg"></div>
+  <div id="matchGrid"></div>
+</dialog>
+
 <script>
 const $ = s => document.querySelector(s);
 const slots = [...document.querySelectorAll('.slot')];
@@ -164,14 +207,19 @@ const held = [null, null];
 const key = (a, b) => [a, b].sort().join('');
 let byKey = new Map(), chars = [], found = new Set(JSON.parse(localStorage.getItem('found') || '[]'));
 
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 fetch('characters.json').then(r => r.json()).then(list => {
   chars = list;
   byKey = new Map(list.map(c => [key(...c.pair), c]));
-  const emoji = [...new Set(list.flatMap(c => c.pair))];
-  for (let i = emoji.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [emoji[i], emoji[j]] = [emoji[j], emoji[i]];
-  }
+  const emoji = shuffle([...new Set(list.flatMap(c => c.pair))]);
   $('#tray').innerHTML = emoji.map(e => `<div class="chip">${e}</div>`).join('');
   score();
   if (location.search.includes('test')) selfTest(list);
@@ -208,6 +256,66 @@ $('#galleryGrid').addEventListener('click', e => {
   $('#lightbox').showModal();
 });
 $('#lightbox').addEventListener('click', () => $('#lightbox').close());
+
+// memory match mini-game
+const MATCH_TIME = 60;
+let matchFlipped = [], matchPairsLeft = 0, matchTimer = null, matchTimeLeft = 0, matchLocked = false;
+
+function startMatch() {
+  clearInterval(matchTimer);
+  const picks = shuffle(chars.filter(c => c.image)).slice(0, 3);
+  const deck = shuffle(picks.concat(picks));
+  matchFlipped = []; matchLocked = false;
+  matchPairsLeft = picks.length;
+  matchTimeLeft = MATCH_TIME;
+  $('#matchMsg').textContent = '';
+  $('#matchTimer').textContent = matchTimeLeft + 's';
+  $('#matchTimer').classList.remove('low');
+  $('#matchGrid').innerHTML = deck.map(c => `
+    <button class="card" data-name="${c.name}">
+      <div class="card-inner">
+        <div class="card-face card-back">🧪</div>
+        <div class="card-face card-front"><img src="${c.image}" alt="${c.name}"></div>
+      </div>
+    </button>
+  `).join('');
+  matchTimer = setInterval(() => {
+    matchTimeLeft--;
+    $('#matchTimer').textContent = matchTimeLeft + 's';
+    if (matchTimeLeft <= 10) $('#matchTimer').classList.add('low');
+    if (matchTimeLeft <= 0) matchEnd(false);
+  }, 1000);
+}
+function matchEnd(won) {
+  clearInterval(matchTimer);
+  matchLocked = true;
+  $('#matchMsg').textContent = won ? `🎉 Matched all pairs in ${MATCH_TIME - matchTimeLeft}s!` : '⏰ Time\'s up! Try again.';
+  beep(won ? [523, 659, 784, 1047] : [200, 120], won ? 0.12 : 0.18, won ? 'triangle' : 'square');
+}
+$('#matchGrid').addEventListener('click', e => {
+  const card = e.target.closest('.card');
+  if (!card || matchLocked || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+  if (ac && ac.state === 'suspended') ac.resume();
+  card.classList.add('flipped');
+  matchFlipped.push(card);
+  if (matchFlipped.length < 2) return;
+  matchLocked = true;
+  const [a, b] = matchFlipped;
+  setTimeout(() => {
+    if (a.dataset.name === b.dataset.name) {
+      a.classList.add('matched'); b.classList.add('matched');
+      if (--matchPairsLeft === 0) matchEnd(true);
+    } else {
+      a.classList.remove('flipped'); b.classList.remove('flipped');
+    }
+    matchFlipped = [];
+    matchLocked = matchTimeLeft <= 0;
+  }, 700);
+});
+$('#matchBtn').onclick = () => { $('#match').showModal(); startMatch(); };
+$('#matchNew').onclick = startMatch;
+$('#matchClose').onclick = () => $('#match').close();
+$('#match').addEventListener('close', () => clearInterval(matchTimer));
 function show(art, name, hint, cls, sayName, image) {
   $('#art').innerHTML = image ? `<img src="${image}" alt="${name}">` : '';
   if (!image) $('#art').textContent = art;
