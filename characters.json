@@ -8,19 +8,11 @@
   { "pair": ["🌵", "🩰"], "name": "Lirili Larila", "art": "🌵🐘⏰", "image": "img/LiriliLarila.png", "hint": "Cactus elephant with sandals and a clock." },
   { "pair": ["🐵", "🍌"], "name": "Chimpanzini Bananini", "art": "🐵🍌🍌", "image": "img/ChimpanziniBananini.png", "hint": "Monkey inside a banana." },
   { "pair": ["🦢", "💣"], "name": "Bombombini Gusini", "art": "🦢💣✈️", "image": "img/BombombiniGusini.png", "hint": "Goose jet with bombs." },
-  { "pair": ["🐄", "🪐"], "name": "La Vaca Saturno Saturnita", "art": "🐄🪐⭐", "hint": "Cow with Saturn's ring." },
   { "pair": ["🐸", "🛞"], "name": "Boneca Ambalabu", "art": "🐸🛞🦵", "image": "img/BonecaAmbalabu.png", "hint": "Frog head, tire body, human legs." },
   { "pair": ["🍤", "🐱"], "name": "Trippi Troppi", "art": "🍤🐱🌊", "image": "img/TrippiTroppi.png", "hint": "Shrimp cat from the sea." },
   { "pair": ["🐫", "🧊"], "name": "Frigo Camelo", "art": "🐫🧊🚪", "image": "img/FrigoCamelo.png", "hint": "Camel fridge. Always cold." },
-  { "pair": ["🐊", "🍇"], "name": "Glorbo Fruttodrillo", "art": "🐊🍇🍉", "hint": "Fruit crocodile." },
+  { "pair": ["🐊", "🍇"], "name": "Glorbo Fruttodrillo", "art": "🐊🍇🍉", "image": "img/GlorboFruttodrillo.png", "hint": "Fruit crocodile." },
+  { "pair": ["🎩", "🐒"], "name": "Matteo", "art": "🎩🐒", "image": "img/Matteo.png", "hint": "Top hat monkey. Sharp-dressed gentleman." },
   { "pair": ["🦒", "🌌"], "name": "Girafa Celestre", "art": "🦒🌌✨", "image": "img/GirafaCelestre.png", "hint": "Space giraffe with six legs." },
-  { "pair": ["🍐", "🩰"], "name": "Trulimero Trulicina", "art": "🐟🦵🐱", "image": "img/TrulimeroTrulicina.png", "hint": "Fish with cat head and four legs." },
-  { "pair": ["🐘", "🌰"], "name": "Tirilicalica Tirilicalaca", "art": "🐘🌰🥥", "hint": "Elephant made of nuts." },
-  { "pair": ["🍕", "🦁"], "name": "Leoni Pizzeroni", "art": "🦁🍕🔥", "hint": "Pizza lion. Extra cheese roar." },
-  { "pair": ["🐙", "🍦"], "name": "Octopusini Gelatini", "art": "🐙🍦🍨", "hint": "Eight scoops, eight arms." },
-  { "pair": ["🐧", "🚀"], "name": "Pinguino Spazzialino", "art": "🐧🚀🌙", "hint": "Penguin astronaut." },
-  { "pair": ["🦆", "🎺"], "name": "Anatra Trombetta", "art": "🦆🎺🎵", "hint": "Duck who only speaks trumpet." },
-  { "pair": ["🐢", "⚡"], "name": "Tartaruga Fulminata", "art": "🐢⚡💨", "hint": "Fastest turtle in Italy." },
-  { "pair": ["🍄", "🐻"], "name": "Orsetto Fungino", "art": "🐻🍄🌲", "hint": "Mushroom bear of the forest." },
-  { "pair": ["🐝", "🍩"], "name": "Apino Donutino", "art": "🐝🍩🍯", "hint": "Bee that makes donuts, not honey." }
+  { "pair": ["🍐", "🩰"], "name": "Trulimero Trulicina", "art": "🐟🦵🐱", "image": "img/TrulimeroTrulicina.png", "hint": "Fish with cat head and four legs." }
 ]
