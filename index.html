@@ -37,6 +37,10 @@
   #galleryHead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   #galleryHead h2 { font-size: 18px; margin: 0; }
   #galleryClose { font-size: 22px; background: none; border: 0; color: #fff; opacity: .7; }
+  #galleryReset {
+    font-size: 13px; font-weight: 700; background: none; border: 1px solid #7a5cc4;
+    color: #fff; opacity: .8; padding: 6px 10px; border-radius: 999px; margin-right: 8px;
+  }
   #galleryGrid {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px;
     overflow-y: auto; max-height: 68vh; padding: 2px;
@@ -148,7 +152,10 @@
 <dialog id="gallery">
   <div id="galleryHead">
     <h2>Discovery Gallery</h2>
-    <button id="galleryClose" aria-label="Close">✕</button>
+    <div>
+      <button id="galleryReset" aria-label="Reset progress">↺ Reset</button>
+      <button id="galleryClose" aria-label="Close">✕</button>
+    </div>
   </div>
   <div id="galleryGrid"></div>
 </dialog>
@@ -189,6 +196,12 @@ function renderGallery() {
 }
 $('#galleryBtn').onclick = () => $('#gallery').showModal();
 $('#galleryClose').onclick = () => $('#gallery').close();
+$('#galleryReset').onclick = () => {
+  if (!confirm('Reset all discovered characters? This can\'t be undone.')) return;
+  found.clear();
+  localStorage.removeItem('found');
+  score();
+};
 $('#gallery').addEventListener('click', e => { if (e.target === $('#gallery')) $('#gallery').close(); });
 $('#galleryGrid').addEventListener('click', e => {
   const cell = e.target.closest('.gcell.found');
