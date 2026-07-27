@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1b1035">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Brainrot Lab</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; margin: 0; overscroll-behavior: none; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #1b1035;
+    color: #fff;
+    touch-action: manipulation;
+    user-select: none; -webkit-user-select: none;
+  }
+  #app { display: flex; height: 100%; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+
+  main {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    padding: 12px; min-width: 0;
+  }
+  #topbar { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+  #score { font-size: 14px; opacity: .6; }
+  #galleryBtn { font-size: 20px; background: none; border: 0; color: #fff; opacity: .7; padding: 4px 8px; }
+
+  dialog#gallery {
+    border: 0; border-radius: 20px; padding: 16px; background: #1b1035; color: #fff;
+    width: min(560px, 92vw); max-height: 82vh;
+  }
+  dialog#gallery::backdrop { background: rgba(0,0,0,.6); }
+  #galleryHead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  #galleryHead h2 { font-size: 18px; margin: 0; }
+  #galleryClose { font-size: 22px; background: none; border: 0; color: #fff; opacity: .7; }
+  #galleryGrid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px;
+    overflow-y: auto; max-height: 68vh; padding: 2px;
+  }
+  .gcell {
+    background: #241645; border-radius: 14px; padding: 8px 6px; text-align: center;
+  }
+  .gcell .gart { font-size: 32px; line-height: 1.2; }
+  .gcell .gname { font-size: 11px; font-weight: 700; color: #ffd76a; margin-top: 4px; }
+  .gcell.locked { background: #150c2b; }
+  .gcell.locked .gart { filter: brightness(0); opacity: .8; }
+  .gcell.locked .gname { color: #6b6086; font-weight: 400; font-size: 10px; }
+
+  #stage {
+    flex: 1; width: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; gap: 8px;
+    background: radial-gradient(circle at 50% 45%, #37206b, transparent 70%);
+    border-radius: 24px; padding: 12px; min-height: 0;
+  }
+  #art { font-size: clamp(48px, 14vmin, 140px); line-height: 1.1; }
+  #name { font-size: clamp(20px, 4.5vmin, 40px); font-weight: 800; color: #ffd76a; }
+  #hint { font-size: clamp(13px, 2.4vmin, 20px); opacity: .8; max-width: 32ch; }
+  #say {
+    display: none; font-size: clamp(13px, 2.2vmin, 16px); font-weight: 700;
+    background: #ffd76a; color: #1b1035; border: 0; border-radius: 999px;
+    padding: 8px 18px; align-items: center; gap: 6px;
+  }
+  #say.show { display: inline-flex; }
+  #say:active { transform: scale(.94); }
+  #stage.win { animation: pop .45s ease; }
+  #stage.bad { animation: shake .35s; }
+  @keyframes pop { 0% { transform: scale(.7); } 60% { transform: scale(1.08); } 100% { transform: scale(1); } }
+  @keyframes shake { 25% { transform: translateX(-12px); } 75% { transform: translateX(12px); } }
+
+  #slots { display: flex; align-items: center; gap: 12px; padding: 14px 0 4px; }
+  .slot {
+    width: clamp(72px, 17vmin, 130px); aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: clamp(38px, 9vmin, 72px);
+    border: 4px dashed #7a5cc4; border-radius: 22px; background: #241645;
+  }
+  .slot.over { border-color: #ffd76a; background: #3a2470; transform: scale(1.06); }
+  .slot.filled { border-style: solid; }
+  #plus { font-size: 32px; opacity: .5; }
+  #reset { font-size: 28px; background: none; border: 0; color: #fff; opacity: .5; padding: 8px; }
+
+  #tray {
+    width: clamp(96px, 18vw, 160px); flex: none;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+    background: #120a26; padding: 10px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); gap: 8px;
+    align-content: start;
+  }
+  .chip {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    font-size: clamp(28px, 5.5vmin, 40px);
+    background: #2a1a52; border-radius: 16px;
+  }
+  .chip:active { transform: scale(.9); }
+
+  #ghost {
+    position: fixed; pointer-events: none; z-index: 9;
+    font-size: 56px; transform: translate(-50%, -50%); display: none;
+  }
+
+  @media (orientation: portrait) {
+    #app { flex-direction: column; }
+    #tray {
+      width: 100%; height: 26vh;
+      grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <main>
+    <div id="topbar">
+      <div id="score"></div>
+      <button id="galleryBtn" aria-label="Gallery">🖼️ Gallery</button>
+    </div>
+    <div id="stage">
+      <div id="art">🧪✨</div>
+      <div id="name">Brainrot Lab</div>
+      <div id="hint">Drag two emojis into the boxes!</div>
+      <button id="say">🔊 Hear name</button>
+    </div>
+    <div id="slots">
+      <div class="slot" data-i="0"></div>
+      <span id="plus">+</span>
+      <div class="slot" data-i="1"></div>
+      <button id="reset" aria-label="Clear">↺</button>
+    </div>
+  </main>
+  <aside id="tray"></aside>
+</div>
+<div id="ghost"></div>
+
+<dialog id="gallery">
+  <div id="galleryHead">
+    <h2>Discovery Gallery</h2>
+    <button id="galleryClose" aria-label="Close">✕</button>
+  </div>
+  <div id="galleryGrid"></div>
+</dialog>
+
+<script>
+const $ = s => document.querySelector(s);
+const slots = [...document.querySelectorAll('.slot')];
+const held = [null, null];
+const key = (a, b) => [a, b].sort().join('');
+let byKey = new Map(), chars = [], found = new Set(JSON.parse(localStorage.getItem('found') || '[]'));
+
+fetch('characters.json').then(r => r.json()).then(list => {
+  chars = list;
+  byKey = new Map(list.map(c => [key(...c.pair), c]));
+  $('#tray').innerHTML = [...new Set(list.flatMap(c => c.pair))]
+    .map(e => `<div class="chip">${e}</div>`).join('');
+  score();
+  if (location.search.includes('test')) selfTest(list);
+}).catch(() => show('⚠️', 'characters.json not loaded', 'Run a local server (see README).'));
+
+function score() {
+  $('#score').textContent = `${found.size} / ${byKey.size} discovered`;
+  renderGallery();
+}
+function renderGallery() {
+  $('#galleryGrid').innerHTML = chars.map(c => {
+    const got = found.has(c.name);
+    return got
+      ? `<div class="gcell"><div class="gart">${c.art}</div><div class="gname">${c.name}</div></div>`
+      : `<div class="gcell locked"><div class="gart">${c.art}</div><div class="gname">🔒 ${c.hint}</div></div>`;
+  }).join('');
+}
+$('#galleryBtn').onclick = () => $('#gallery').showModal();
+$('#galleryClose').onclick = () => $('#gallery').close();
+$('#gallery').addEventListener('click', e => { if (e.target === $('#gallery')) $('#gallery').close(); });
+function show(art, name, hint, cls, sayName) {
+  $('#art').textContent = art; $('#name').textContent = name; $('#hint').textContent = hint;
+  const st = $('#stage');
+  st.className = ''; void st.offsetWidth; if (cls) st.className = cls;
+  $('#say').classList.toggle('show', !!sayName);
+  $('#say').onclick = () => speak(sayName);
+}
+function speak(text) {
+  if (!('speechSynthesis' in window) || !text) return;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+}
+function place(i, emoji) {
+  held[i] = emoji;
+  slots[i].textContent = emoji;
+  slots[i].classList.add('filled');
+  if (held[0] && held[1]) combine();
+}
+function clear() {
+  held[0] = held[1] = null;
+  slots.forEach(s => { s.textContent = ''; s.classList.remove('filled'); });
+}
+function combine() {
+  const c = byKey.get(key(held[0], held[1]));
+  if (c) {
+    beep([523, 659, 784, 1047], 0.12);
+    show(c.art, c.name, c.hint, 'win', c.name);
+    found.add(c.name);
+    localStorage.setItem('found', JSON.stringify([...found]));
+    score();
+  } else {
+    beep([200, 120], 0.18, 'square');
+    show('💥', 'Nope!', 'That combo makes nothing. Try again!', 'bad');
+  }
+  setTimeout(clear, 700);
+}
+
+// sound (WebAudio, no files)
+let ac;
+function beep(freqs, dur, type = 'triangle') {
+  ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+  freqs.forEach((f, i) => {
+    const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime + i * dur;
+    o.type = type; o.frequency.value = f;
+    g.gain.setValueAtTime(0.25, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.connect(g).connect(ac.destination); o.start(t); o.stop(t + dur);
+  });
+}
+
+// drag (pointer events — HTML5 drag&drop doesn't work on iOS)
+const ghost = $('#ghost');
+let drag = null;
+document.addEventListener('pointerdown', e => {
+  if (ac && ac.state === 'suspended') ac.resume();
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  drag = { emoji: chip.textContent, x: e.clientX, y: e.clientY, moved: false };
+  e.target.setPointerCapture(e.pointerId);
+  e.preventDefault();
+});
+document.addEventListener('pointermove', e => {
+  if (!drag) return;
+  if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 8) drag.moved = true;
+  if (!drag.moved) return;
+  ghost.textContent = drag.emoji;
+  ghost.style.cssText = `display:block;left:${e.clientX}px;top:${e.clientY}px`;
+  const over = slotAt(e);
+  slots.forEach(s => s.classList.toggle('over', s === over));
+});
+document.addEventListener('pointerup', e => {
+  if (!drag) return;
+  ghost.style.display = 'none';
+  slots.forEach(s => s.classList.remove('over'));
+  // tap = drop into first free slot
+  const slot = drag.moved ? slotAt(e) : (slots[held[0] ? 1 : 0]);
+  if (slot) place(+slot.dataset.i, drag.emoji);
+  drag = null;
+});
+function slotAt(e) {
+  const el = document.elementFromPoint(e.clientX, e.clientY);
+  return el && el.closest('.slot');
+}
+$('#reset').onclick = clear;
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
+}
+
+function selfTest(list) {
+  const seen = new Set();
+  for (const c of list) {
+    console.assert(c.pair.length === 2, 'pair must be 2', c.name);
+    const k = key(...c.pair);
+    console.assert(!seen.has(k), 'duplicate combo', c.name);
+    seen.add(k);
+  }
+  const c = list[0];
+  console.assert(byKey.get(key(c.pair[1], c.pair[0])) === c, 'order must not matter');
+  console.assert(byKey.get(key('🚗', '🚗')) === undefined, 'unknown combo must miss');
+  show('✅', 'Self-test passed', `${list.length} characters, ${seen.size} unique combos.`);
+}
+</script>
+</body>
+</html>
