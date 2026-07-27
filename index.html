@@ -61,18 +61,18 @@
 
   #stage {
     flex: 1; width: 100%; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; text-align: center; gap: 8px;
+    align-items: center; justify-content: center; text-align: center; gap: clamp(10px, 3vmin, 22px);
     background: radial-gradient(circle at 50% 45%, #37206b, transparent 70%);
     border-radius: 24px; padding: 12px; min-height: 0;
   }
   #art { font-size: clamp(48px, 14vmin, 140px); line-height: 1.1; }
   #art img { height: clamp(90px, 30vmin, 260px); width: auto; max-width: 80vw; border-radius: 16px; display: block; }
   #name { font-size: clamp(20px, 4.5vmin, 40px); font-weight: 800; color: #ffd76a; }
-  #hint { font-size: clamp(13px, 2.4vmin, 20px); opacity: .8; max-width: 32ch; }
+  #hint { font-size: clamp(13px, 2.4vmin, 20px); opacity: .8; max-width: 32ch; margin-top: 4px; }
   #say {
     display: none; font-size: clamp(13px, 2.2vmin, 16px); font-weight: 700;
     background: #ffd76a; color: #1b1035; border: 0; border-radius: 999px;
-    padding: 8px 18px; align-items: center; gap: 6px;
+    padding: 8px 18px; align-items: center; gap: 6px; margin-top: 6px;
   }
   #say.show { display: inline-flex; }
   #say:active { transform: scale(.94); }
