@@ -14,5 +14,17 @@
   { "pair": ["🐊", "🍇"], "name": "Glorbo Fruttodrillo", "art": "🐊🍇🍉", "image": "img/GlorboFruttodrillo.png", "hint": "Fruit crocodile." },
   { "pair": ["🎩", "🐒"], "name": "Matteo", "art": "🎩🐒", "image": "img/Matteo.png", "hint": "Top hat monkey. Sharp-dressed gentleman." },
   { "pair": ["🦒", "🌌"], "name": "Girafa Celestre", "art": "🦒🌌✨", "image": "img/GirafaCelestre.png", "hint": "Space giraffe with six legs." },
-  { "pair": ["🍐", "🩰"], "name": "Trulimero Trulicina", "art": "🐟🦵🐱", "image": "img/TrulimeroTrulicina.png", "hint": "Fish with cat head and four legs." }
+  { "pair": ["🍐", "🩰"], "name": "Trulimero Trulicina", "art": "🐟🦵🐱", "image": "img/TrulimeroTrulicina.png", "hint": "Fish with cat head and four legs." },
+  { "pair": ["🥑", "🐐"], "name": "Avocadini Antilopini", "art": "🥑🐐", "image": "img/AvocadiniAntilopini.png", "hint": "Avocado goat with curly horns." },
+  { "pair": ["🥑", "🦍"], "name": "Avocadorilla", "art": "🥑🦍", "image": "img/Avocadorilla.png", "hint": "Avocado gorilla. Guac-tastic strength." },
+  { "pair": ["🥛", "🩰"], "name": "Ballerinolololo", "art": "🥛🩰", "image": "img/Ballerinolololo.png", "hint": "Milk carton ballerina." },
+  { "pair": ["🍌", "🐬"], "name": "Bananita Dolphinita", "art": "🍌🐬", "image": "img/BananitaDolphinita.png", "hint": "Dolphin wearing a banana peel." },
+  { "pair": ["🫐", "🐙"], "name": "Blueberrinni Octopusini", "art": "🫐🐙", "image": "img/BlueberrinniOctopusini.png", "hint": "Blueberry octopus." },
+  { "pair": ["🥥", "🦔"], "name": "Burbaloni Loliloli", "art": "🥥🦔", "image": "img/BurbaloniLoliloli.png", "hint": "Coconut hedgehog creature." },
+  { "pair": ["👨‍🍳", "🦀"], "name": "Chef Crabracadabra", "art": "👨‍🍳🦀", "image": "img/ChefCrabracadabra.png", "hint": "Crab chef. Magic in the kitchen." },
+  { "pair": ["🦍", "🔊"], "name": "Gorillo Subwoofero", "art": "🦍🔊", "image": "img/GorilloSubwoofero.png", "hint": "Gorilla made of speakers. Bass boosted." },
+  { "pair": ["🦍", "🍉"], "name": "Gorillo Watermelondrillo", "art": "🦍🍉", "image": "img/GorilloWatermelondrillo.png", "hint": "Gorilla with a watermelon belly." },
+  { "pair": ["🦧", "🍍"], "name": "Orangutini Ananassini", "art": "🦧🍍", "image": "img/OrangutiniAnanassini.png", "hint": "Orangutan pineapple." },
+  { "pair": ["🐼", "🍌"], "name": "Pandaccini Bananini", "art": "🐼🍌", "image": "img/PandacciniBananini.png", "hint": "Panda wrapped in a banana peel." },
+  { "pair": ["🎄", "🎅"], "name": "Tree Tree Tree Sahur", "art": "🎄🎅", "image": "img/TreeTreeTreeSahur.png", "hint": "Christmas tree. Tree tree tree!" }
 ]
