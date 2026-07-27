@@ -174,8 +174,12 @@ let byKey = new Map(), chars = [], found = new Set(JSON.parse(localStorage.getIt
 fetch('characters.json').then(r => r.json()).then(list => {
   chars = list;
   byKey = new Map(list.map(c => [key(...c.pair), c]));
-  $('#tray').innerHTML = [...new Set(list.flatMap(c => c.pair))]
-    .map(e => `<div class="chip">${e}</div>`).join('');
+  const emoji = [...new Set(list.flatMap(c => c.pair))];
+  for (let i = emoji.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [emoji[i], emoji[j]] = [emoji[j], emoji[i]];
+  }
+  $('#tray').innerHTML = emoji.map(e => `<div class="chip">${e}</div>`).join('');
   score();
   if (location.search.includes('test')) selfTest(list);
 }).catch(() => show('⚠️', 'characters.json not loaded', 'Run a local server (see README).'));
