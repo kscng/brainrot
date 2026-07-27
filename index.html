@@ -102,6 +102,7 @@
   }
   #art { font-size: clamp(48px, 14vmin, 140px); line-height: 1.1; }
   #art img { height: clamp(90px, 30vmin, 260px); width: auto; max-width: 80vw; border-radius: 16px; display: block; }
+  #art img.banner { height: clamp(160px, 48vmin, 440px); }
   #name { font-size: clamp(20px, 4.5vmin, 40px); font-weight: 800; color: #ffd76a; }
   #hint { font-size: clamp(13px, 2.4vmin, 20px); opacity: .8; max-width: 32ch; margin-top: 4px; }
   #say {
@@ -159,7 +160,7 @@
       <button id="galleryBtn" aria-label="Gallery">🖼️ Gallery</button>
     </div>
     <div id="stage">
-      <div id="art">🧪✨</div>
+      <div id="art"><img class="banner" src="img/banner_transparent.png" alt="Brainrot Lab"></div>
       <div id="name">Brainrot Lab</div>
       <div id="hint">Drag two emojis into the boxes!</div>
       <button id="say">🔊 Hear name</button>
