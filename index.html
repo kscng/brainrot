@@ -92,7 +92,6 @@
     font-size: clamp(38px, 9vmin, 72px);
     border: 4px dashed #7a5cc4; border-radius: 22px; background: #241645;
   }
-  .slot.over { border-color: #ffd76a; background: #3a2470; transform: scale(1.06); }
   .slot.filled { border-style: solid; }
   #plus { font-size: 32px; opacity: .5; }
   #reset { font-size: 28px; background: none; border: 0; color: #fff; opacity: .5; padding: 8px; }
@@ -110,11 +109,6 @@
     background: #2a1a52; border-radius: 16px;
   }
   .chip:active { transform: scale(.9); }
-
-  #ghost {
-    position: fixed; pointer-events: none; z-index: 9;
-    font-size: 56px; transform: translate(-50%, -50%); display: none;
-  }
 
   @media (orientation: portrait) {
     #app { flex-direction: column; }
@@ -147,7 +141,6 @@
   </main>
   <aside id="tray"></aside>
 </div>
-<div id="ghost"></div>
 
 <dialog id="gallery">
   <div id="galleryHead">
@@ -267,39 +260,12 @@ function beep(freqs, dur, type = 'triangle') {
   });
 }
 
-// drag (pointer events — HTML5 drag&drop doesn't work on iOS)
-const ghost = $('#ghost');
-let drag = null;
-document.addEventListener('pointerdown', e => {
+$('#tray').addEventListener('click', e => {
   if (ac && ac.state === 'suspended') ac.resume();
   const chip = e.target.closest('.chip');
   if (!chip) return;
-  drag = { emoji: chip.textContent, x: e.clientX, y: e.clientY, moved: false };
-  e.target.setPointerCapture(e.pointerId);
-  e.preventDefault();
+  place(held[0] ? 1 : 0, chip.textContent);
 });
-document.addEventListener('pointermove', e => {
-  if (!drag) return;
-  if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 8) drag.moved = true;
-  if (!drag.moved) return;
-  ghost.textContent = drag.emoji;
-  ghost.style.cssText = `display:block;left:${e.clientX}px;top:${e.clientY}px`;
-  const over = slotAt(e);
-  slots.forEach(s => s.classList.toggle('over', s === over));
-});
-document.addEventListener('pointerup', e => {
-  if (!drag) return;
-  ghost.style.display = 'none';
-  slots.forEach(s => s.classList.remove('over'));
-  // tap = drop into first free slot
-  const slot = drag.moved ? slotAt(e) : (slots[held[0] ? 1 : 0]);
-  if (slot) place(+slot.dataset.i, drag.emoji);
-  drag = null;
-});
-function slotAt(e) {
-  const el = document.elementFromPoint(e.clientX, e.clientY);
-  return el && el.closest('.slot');
-}
 $('#reset').onclick = clear;
 
 if ('serviceWorker' in navigator) {
