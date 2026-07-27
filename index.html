@@ -45,6 +45,7 @@
     background: #241645; border-radius: 14px; padding: 8px 6px; text-align: center;
   }
   .gcell .gart { font-size: 32px; line-height: 1.2; }
+  .gcell .gart img { height: 32px; width: auto; border-radius: 6px; }
   .gcell .gname { font-size: 11px; font-weight: 700; color: #ffd76a; margin-top: 4px; }
   .gcell.locked { background: #150c2b; }
   .gcell.locked .gart { filter: brightness(0); opacity: .8; }
@@ -57,6 +58,7 @@
     border-radius: 24px; padding: 12px; min-height: 0;
   }
   #art { font-size: clamp(48px, 14vmin, 140px); line-height: 1.1; }
+  #art img { height: clamp(90px, 30vmin, 260px); width: auto; max-width: 80vw; border-radius: 16px; display: block; }
   #name { font-size: clamp(20px, 4.5vmin, 40px); font-weight: 800; color: #ffd76a; }
   #hint { font-size: clamp(13px, 2.4vmin, 20px); opacity: .8; max-width: 32ch; }
   #say {
@@ -166,16 +168,19 @@ function score() {
 function renderGallery() {
   $('#galleryGrid').innerHTML = chars.map(c => {
     const got = found.has(c.name);
+    const artHtml = c.image && got ? `<img src="${c.image}" alt="${c.name}">` : c.art;
     return got
-      ? `<div class="gcell"><div class="gart">${c.art}</div><div class="gname">${c.name}</div></div>`
+      ? `<div class="gcell"><div class="gart">${artHtml}</div><div class="gname">${c.name}</div></div>`
       : `<div class="gcell locked"><div class="gart">${c.art}</div><div class="gname">🔒 ${c.hint}</div></div>`;
   }).join('');
 }
 $('#galleryBtn').onclick = () => $('#gallery').showModal();
 $('#galleryClose').onclick = () => $('#gallery').close();
 $('#gallery').addEventListener('click', e => { if (e.target === $('#gallery')) $('#gallery').close(); });
-function show(art, name, hint, cls, sayName) {
-  $('#art').textContent = art; $('#name').textContent = name; $('#hint').textContent = hint;
+function show(art, name, hint, cls, sayName, image) {
+  $('#art').innerHTML = image ? `<img src="${image}" alt="${name}">` : '';
+  if (!image) $('#art').textContent = art;
+  $('#name').textContent = name; $('#hint').textContent = hint;
   const st = $('#stage');
   st.className = ''; void st.offsetWidth; if (cls) st.className = cls;
   $('#say').classList.toggle('show', !!sayName);
@@ -200,7 +205,7 @@ function combine() {
   const c = byKey.get(key(held[0], held[1]));
   if (c) {
     beep([523, 659, 784, 1047], 0.12);
-    show(c.art, c.name, c.hint, 'win', c.name);
+    show(c.art, c.name, c.hint, 'win', c.name, c.image);
     found.add(c.name);
     localStorage.setItem('found', JSON.stringify([...found]));
     score();
