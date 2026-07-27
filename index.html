@@ -295,7 +295,6 @@ function matchEnd(won) {
 $('#matchGrid').addEventListener('click', e => {
   const card = e.target.closest('.card');
   if (!card || matchLocked || card.classList.contains('flipped') || card.classList.contains('matched')) return;
-  if (ac && ac.state === 'suspended') ac.resume();
   card.classList.add('flipped');
   matchFlipped.push(card);
   if (matchFlipped.length < 2) return;
@@ -359,6 +358,7 @@ function combine() {
 let ac;
 function beep(freqs, dur, type = 'triangle') {
   ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+  if (ac.state === 'suspended') ac.resume();
   freqs.forEach((f, i) => {
     const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime + i * dur;
     o.type = type; o.frequency.value = f;
@@ -369,7 +369,6 @@ function beep(freqs, dur, type = 'triangle') {
 }
 
 $('#tray').addEventListener('click', e => {
-  if (ac && ac.state === 'suspended') ac.resume();
   const chip = e.target.closest('.chip');
   if (!chip) return;
   place(held[0] ? 1 : 0, chip.textContent);
