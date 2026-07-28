@@ -25,8 +25,8 @@
     flex: 1; display: flex; flex-direction: column; align-items: center;
     padding: 12px; min-width: 0;
   }
-  #topbar { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-  #score { font-size: 14px; opacity: .6; }
+  #topbar { display: flex; justify-content: flex-end; align-items: center; gap: 4px; width: 100%; }
+  #score { font-size: 14px; font-weight: 800; color: #ffd76a; }
   #galleryBtn, #matchBtn, #bgmBtn { font-size: 20px; background: none; border: 0; color: #fff; opacity: .7; padding: 4px 8px; }
 
   dialog#gallery {
@@ -155,12 +155,12 @@
 <div id="app">
   <main>
     <div id="topbar">
-      <div id="score"></div>
       <button id="bgmBtn" aria-label="Toggle music">🔊</button>
       <button id="matchBtn" aria-label="Matching game">🃏 Match</button>
       <button id="galleryBtn" aria-label="Gallery">🖼️ Gallery</button>
     </div>
     <div id="stage">
+      <div id="score"></div>
       <div id="art"><img class="banner" src="img/banner_transparent.png" alt="Brainrot Lab"></div>
       <div id="name">Brainrot Lab</div>
       <div id="hint">Drag two emojis into the boxes!</div>
