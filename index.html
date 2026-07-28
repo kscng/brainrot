@@ -201,6 +201,8 @@
   <div id="matchGrid"></div>
 </dialog>
 
+<audio id="bgm" src="img/bg.mp3" loop preload="auto"></audio>
+
 <script>
 const $ = s => document.querySelector(s);
 const slots = [...document.querySelectorAll('.slot')];
@@ -354,6 +356,11 @@ function combine() {
   }
   setTimeout(clear, 700);
 }
+
+// background music: browsers block autoplay-with-sound, so start on first tap
+const bgm = $('#bgm');
+bgm.volume = 0.15;
+document.addEventListener('pointerdown', () => bgm.play().catch(() => {}), { once: true });
 
 // sound (WebAudio, no files)
 let ac;
