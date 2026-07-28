@@ -117,6 +117,15 @@
   #stage.bad { animation: shake .35s; }
   @keyframes pop { 0% { transform: scale(.7); } 60% { transform: scale(1.08); } 100% { transform: scale(1); } }
   @keyframes shake { 25% { transform: translateX(-12px); } 75% { transform: translateX(12px); } }
+  #art img.nudge { animation: nudge .5s ease; }
+  @keyframes nudge {
+    0%, 100% { transform: rotate(0) scale(1); }
+    15% { transform: rotate(-10deg) scale(1.06); }
+    30% { transform: rotate(8deg) scale(1.06); }
+    45% { transform: rotate(-6deg) scale(1.03); }
+    60% { transform: rotate(4deg) scale(1.03); }
+    80% { transform: rotate(-2deg); }
+  }
 
   #slots { display: flex; align-items: center; gap: 12px; padding: 14px 0 4px; }
   .slot {
@@ -321,7 +330,7 @@ $('#matchNew').onclick = startMatch;
 $('#matchClose').onclick = () => $('#match').close();
 $('#match').addEventListener('close', () => clearInterval(matchTimer));
 function show(art, name, hint, cls, sayName, image) {
-  $('#art').innerHTML = image ? `<img src="${image}" alt="${name}">` : '';
+  $('#art').innerHTML = image ? `<img src="${image}" alt="${name}" class="${cls === 'bad' ? 'nudge' : ''}">` : '';
   if (!image) $('#art').textContent = art;
   $('#name').textContent = name; $('#hint').textContent = hint;
   const st = $('#stage');

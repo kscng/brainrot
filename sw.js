@@ -1,4 +1,4 @@
-const CACHE = 'brainrot-v27';
+const CACHE = 'brainrot-v28';
 const FILES = [
   './',
   './index.html',
