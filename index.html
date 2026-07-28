@@ -359,7 +359,7 @@ function combine() {
 
 // background music: browsers block autoplay-with-sound, so start on first tap
 const bgm = $('#bgm');
-bgm.volume = 0.15;
+bgm.volume = 0.08;
 document.addEventListener('pointerdown', () => bgm.play().catch(() => {}), { once: true });
 
 // sound (WebAudio, no files)
