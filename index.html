@@ -354,7 +354,7 @@ function combine() {
     score();
   } else {
     beep([200, 120], 0.18, 'square');
-    show('💥', 'Nope!', 'That combo makes nothing. Try again!', 'bad');
+    show('💥', 'Nope!', 'That combo makes nothing. Try again!', 'bad', null, 'img/wrong.png');
   }
   setTimeout(clear, 700);
 }
