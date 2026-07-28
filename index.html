@@ -385,6 +385,12 @@ $('#reset').onclick = clear;
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
+  let swRefreshed = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (swRefreshed) return;
+    swRefreshed = true;
+    location.reload();
+  });
 }
 
 function selfTest(list) {
