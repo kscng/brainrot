@@ -27,7 +27,7 @@
   }
   #topbar { display: flex; justify-content: space-between; align-items: center; width: 100%; }
   #score { font-size: 14px; opacity: .6; }
-  #galleryBtn, #matchBtn { font-size: 20px; background: none; border: 0; color: #fff; opacity: .7; padding: 4px 8px; }
+  #galleryBtn, #matchBtn, #bgmBtn { font-size: 20px; background: none; border: 0; color: #fff; opacity: .7; padding: 4px 8px; }
 
   dialog#gallery {
     border: 0; border-radius: 20px; padding: 16px; background: #1b1035; color: #fff;
@@ -156,6 +156,7 @@
   <main>
     <div id="topbar">
       <div id="score"></div>
+      <button id="bgmBtn" aria-label="Toggle music">🔊</button>
       <button id="matchBtn" aria-label="Matching game">🃏 Match</button>
       <button id="galleryBtn" aria-label="Gallery">🖼️ Gallery</button>
     </div>
@@ -360,7 +361,15 @@ function combine() {
 // background music: browsers block autoplay-with-sound, so start on first tap
 const bgm = $('#bgm');
 bgm.volume = 0.08;
-document.addEventListener('pointerdown', () => bgm.play().catch(() => {}), { once: true });
+let bgmOn = localStorage.getItem('bgmOn') !== 'false';
+$('#bgmBtn').textContent = bgmOn ? '🔊' : '🔇';
+document.addEventListener('pointerdown', () => { if (bgmOn) bgm.play().catch(() => {}); }, { once: true });
+$('#bgmBtn').onclick = () => {
+  bgmOn = !bgmOn;
+  localStorage.setItem('bgmOn', bgmOn);
+  $('#bgmBtn').textContent = bgmOn ? '🔊' : '🔇';
+  if (bgmOn) bgm.play().catch(() => {}); else bgm.pause();
+};
 
 // sound (WebAudio, no files)
 let ac;
