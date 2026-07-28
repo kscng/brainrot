@@ -1,4 +1,4 @@
-const CACHE = 'brainrot-v28';
+const CACHE = 'brainrot-v29';
 const FILES = [
   './',
   './index.html',
@@ -10,6 +10,7 @@ const FILES = [
   './img/banner_transparent.png',
   './img/bg.mp3',
   './img/wrong.png',
+  './fonts/LuckiestGuy.ttf',
 ];
 
 self.addEventListener('install', e => {
